@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/kalkulator-gaji",
+    url: "https://urusin.biz.id/kalkulator-gaji",
     siteName: "Urusin",
     title: "Kalkulator Gaji Bersih Online | Urusin",
     description:

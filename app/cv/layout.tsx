@@ -21,13 +21,13 @@ export const metadata: Metadata = {
   ],
 
   alternates: {
-    canonical: "/cv",
+    canonical:  "https://urusin.biz.id/cv",
   },
 
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/cv",
+    url: "https://urusin.biz.id/cv", 
     siteName: "Urusin",
     title: "Buat CV ATS Gratis | Urusin",
     description:

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/resize-foto",
+    url: "https://urusin.biz.id/resize-foto",
     siteName: "Urusin",
     title: "Resize Foto 3×4, 4×6, 2×3 Gratis | Urusin",
     description:

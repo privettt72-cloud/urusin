@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
 
-    sitemap: "https://urusin.id/sitemap.xml",
+    sitemap: "https://urusin.biz.id/sitemap.xml",
   };
 }
 

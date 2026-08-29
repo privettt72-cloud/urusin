@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/compress-foto",
+    url: "https://urusin.biz.id/compress-foto",
     siteName: "Urusin",
     title: "Compress Foto Online Gratis | Urusin",
     description:

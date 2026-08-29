@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/kalkulator-diskon",
+    url: "https://urusin.biz.id/kalkulator-diskon",
     siteName: "Urusin",
     title: "Kalkulator Diskon Online | Urusin",
     description:

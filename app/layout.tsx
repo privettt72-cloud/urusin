@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://urusin.id"),
+  metadataBase: new URL("https://urusin.biz.id"),
 
   title: {
     default: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id",
+    url: "https://urusin.biz.id",
     siteName: "Urusin",
     title: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
     description:

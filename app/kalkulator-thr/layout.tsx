@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.id/kalkulator-thr",
+    url: "https://urusin.biz.id/kalkulator-thr",
     siteName: "Urusin",
     title: "Kalkulator THR Online | Urusin",
     description:
