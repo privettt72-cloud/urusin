@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.biz.id/surat-resign",
+    url: "https://www.urusin.biz.id/surat-resign",
     siteName: "Urusin",
     title: "Surat Resign Profesional Gratis | Urusin",
     description:

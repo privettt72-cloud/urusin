@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.biz.id/surat-lamaran",
+    url: "https://www.urusin.biz.id/surat-lamaran",
     siteName: "Urusin",
     title: "Surat Lamaran Kerja Gratis | Urusin",
     description:

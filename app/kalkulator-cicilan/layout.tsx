@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.biz.id/kalkulator-cicilan",
+    url: "https://www.urusin.biz.id/kalkulator-cicilan",
     siteName: "Urusin",
     title: "Kalkulator Cicilan Online | Urusin",
     description:
