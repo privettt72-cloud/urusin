@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ],
 
   alternates: {
-    canonical: "/compress-foto",
+    canonical: "https://www.urusin.biz.id/compress-foto",
   },
 
   openGraph: {
