@@ -1,9 +1,10 @@
 
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.urusin.biz.id"),
+  metadataBase: new URL("https://urusin.biz.id"),
 
   title: {
     default: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://www.urusin.biz.id",
+    url: "https://urusin.biz.id",
     siteName: "Urusin",
     title: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
     description:
@@ -96,7 +97,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body>
+        {children}
+
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-26K8TL5MDM"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-26K8TL5MDM');
+          `}
+        </Script>
+      </body>
     </html>
   );
 }
