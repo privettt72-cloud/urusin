@@ -2,43 +2,41 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Buat CV ATS Gratis",
+  title: "Buat CV ATS Gratis Online untuk Lamaran Kerja | Urusin",
 
   description:
-    "Buat CV ATS profesional secara gratis dengan Urusin. Isi data diri, pendidikan, pengalaman kerja, dan keahlian. Lihat preview CV A4 secara langsung dan siapkan CV untuk melamar kerja.",
+    "Buat CV ATS gratis online untuk lamaran kerja. Isi data diri, pendidikan, pengalaman, dan keahlian dengan mudah, lalu siapkan CV profesional dalam format A4 dan PDF.",
 
   keywords: [
     "buat CV ATS",
     "CV ATS gratis",
     "buat CV gratis",
-    "CV profesional",
-    "CV online",
-    "template CV ATS",
-    "contoh CV ATS",
-    "buat CV lamaran kerja",
-    "CV lamaran kerja",
     "CV ATS online",
+    "buat CV online",
+    "CV lamaran kerja",
+    "CV profesional",
+    "template CV ATS",
   ],
 
   alternates: {
-    canonical:  "https://www.urusin.biz.id/cv",
+    canonical: "https://www.urusin.biz.id/cv",
   },
 
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://www.urusin.biz.id/cv", 
+    url: "https://www.urusin.biz.id/cv",
     siteName: "Urusin",
-    title: "Buat CV ATS Gratis | Urusin",
+    title: "Buat CV ATS Gratis Online untuk Lamaran Kerja | Urusin",
     description:
-      "Buat CV ATS profesional secara gratis dengan Urusin. Lengkapi data diri, pendidikan, pengalaman kerja, dan keahlian dengan mudah.",
+      "Buat CV ATS gratis online untuk lamaran kerja. Isi data diri, pendidikan, pengalaman, dan keahlian, lalu siapkan CV profesional dalam format PDF.",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Buat CV ATS Gratis | Urusin",
+    title: "Buat CV ATS Gratis Online | Urusin",
     description:
-      "Buat CV ATS profesional secara gratis dengan Urusin.",
+      "Buat CV ATS profesional secara gratis untuk kebutuhan lamaran kerja.",
   },
 
   robots: {
