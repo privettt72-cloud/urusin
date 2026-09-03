@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -104,13 +103,13 @@ export default function KalkulatorGajiPage() {
         </div>
 
         <h1 className="text-3xl font-black md:text-4xl">
-          Kalkulator Gaji
+          Kalkulator Gaji Bersih Online
         </h1>
 
         <p className="mt-2 max-w-2xl text-slate-600">
-          Hitung perkiraan total pendapatan dan
-          gaji bersih berdasarkan gaji pokok,
-          tunjangan, lembur, bonus, dan potongan.
+          Hitung perkiraan gaji bersih dan pendapatan
+          kotor berdasarkan gaji pokok, tunjangan,
+          lembur, bonus, dan potongan secara mudah.
         </p>
 
       </section>
@@ -339,6 +338,170 @@ export default function KalkulatorGajiPage() {
       </div>
 
 
+      {/* SEO CONTENT */}
+
+      <section className="border-t bg-white">
+
+        <div className="mx-auto max-w-4xl px-5 py-14">
+
+          <h2 className="text-2xl font-black md:text-3xl">
+            Kalkulator Gaji Bersih dan Gaji Kotor
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-7 text-slate-600">
+
+            <p>
+              Kalkulator gaji Urusin membantu menghitung
+              perkiraan gaji bersih berdasarkan komponen
+              pendapatan yang kamu masukkan. Kamu dapat
+              memasukkan gaji pokok, tunjangan, lembur,
+              bonus, dan total potongan untuk mendapatkan
+              estimasi pendapatan setelah potongan.
+            </p>
+
+            <p>
+              Gaji kotor adalah total pendapatan sebelum
+              dikurangi potongan. Sementara itu, gaji
+              bersih adalah jumlah yang tersisa setelah
+              potongan yang dimasukkan ke dalam perhitungan.
+              Karena setiap perusahaan dapat memiliki
+              komponen gaji dan potongan yang berbeda,
+              hasil kalkulator ini merupakan estimasi.
+            </p>
+
+          </div>
+
+
+          {/* CARA MENGGUNAKAN */}
+
+          <div className="mt-12">
+
+            <h2 className="text-2xl font-black">
+              Cara Menghitung Gaji Bersih
+            </h2>
+
+            <p className="mt-4 text-sm leading-7 text-slate-600">
+              Untuk menggunakan kalkulator gaji, masukkan
+              nominal sesuai rincian pendapatan dan potongan
+              yang ingin dihitung.
+            </p>
+
+            <ol className="mt-5 space-y-3 text-sm leading-7 text-slate-600">
+
+              <li>
+                <strong>1. Masukkan gaji pokok.</strong>{" "}
+                Isi dengan nominal gaji utama yang diterima.
+              </li>
+
+              <li>
+                <strong>2. Masukkan tunjangan.</strong>{" "}
+                Tambahkan tunjangan yang ingin diperhitungkan.
+              </li>
+
+              <li>
+                <strong>3. Masukkan lembur dan bonus.</strong>{" "}
+                Isi jika terdapat pendapatan tambahan.
+              </li>
+
+              <li>
+                <strong>4. Masukkan total potongan.</strong>{" "}
+                Masukkan jumlah potongan yang ingin dikurangi.
+              </li>
+
+              <li>
+                <strong>5. Lihat hasil gaji bersih.</strong>{" "}
+                Hasil akan diperbarui secara otomatis.
+              </li>
+
+            </ol>
+
+          </div>
+
+
+          {/* KOMPONEN GAJI */}
+
+          <div className="mt-12">
+
+            <h2 className="text-2xl font-black">
+              Komponen dalam Perhitungan Gaji
+            </h2>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+
+              <SeoCard
+                title="Gaji Pokok"
+                text="Pendapatan utama yang menjadi dasar gaji sebelum ditambahkan komponen pendapatan lainnya."
+              />
+
+              <SeoCard
+                title="Tunjangan"
+                text="Tambahan pendapatan yang dapat diberikan perusahaan sesuai kebijakan dan jenis pekerjaan."
+              />
+
+              <SeoCard
+                title="Lembur"
+                text="Pendapatan tambahan yang berasal dari pekerjaan di luar waktu kerja normal."
+              />
+
+              <SeoCard
+                title="Bonus"
+                text="Pendapatan tambahan seperti bonus kinerja atau bonus lainnya yang ingin dimasukkan dalam estimasi."
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* FAQ */}
+
+          <div className="mt-14">
+
+            <h2 className="text-2xl font-black md:text-3xl">
+              FAQ Kalkulator Gaji
+            </h2>
+
+            <div className="mt-6 space-y-4">
+
+              <Faq
+                question="Apa itu gaji bersih?"
+                answer="Gaji bersih adalah perkiraan jumlah pendapatan yang tersisa setelah dikurangi potongan yang dimasukkan ke dalam perhitungan."
+              />
+
+              <Faq
+                question="Apa bedanya gaji kotor dan gaji bersih?"
+                answer="Gaji kotor merupakan total pendapatan sebelum potongan, sedangkan gaji bersih merupakan pendapatan setelah potongan yang diperhitungkan."
+              />
+
+              <Faq
+                question="Bagaimana cara menghitung gaji bersih?"
+                answer="Secara sederhana, pendapatan kotor dihitung dari gaji pokok ditambah tunjangan, lembur, dan bonus. Setelah itu, total potongan dikurangi dari pendapatan kotor untuk mendapatkan estimasi gaji bersih."
+              />
+
+              <Faq
+                question="Apakah kalkulator gaji ini gratis?"
+                answer="Ya. Kalkulator gaji Urusin dapat digunakan secara gratis tanpa perlu membuat akun."
+              />
+
+              <Faq
+                question="Apakah data gaji saya disimpan?"
+                answer="Perhitungan dilakukan langsung di browser. Data yang kamu masukkan digunakan untuk menghitung hasil pada halaman ini."
+              />
+
+              <Faq
+                question="Apakah hasil kalkulator sama dengan gaji yang diterima?"
+                answer="Belum tentu. Hasil merupakan estimasi berdasarkan angka yang kamu masukkan. Gaji sebenarnya dapat berbeda karena pajak, BPJS, jenis potongan, lembur, tunjangan, dan kebijakan perusahaan."
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
       {/* FOOTER */}
 
       <footer className="border-t bg-white py-7 text-center">
@@ -500,6 +663,60 @@ function Info({
 
 
 /* ========================================
+   SEO CARD
+======================================== */
+
+function SeoCard({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+      <h3 className="font-black">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        {text}
+      </p>
+
+    </div>
+  );
+}
+
+
+/* ========================================
+   FAQ
+======================================== */
+
+function Faq({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  return (
+    <details className="group rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+      <summary className="cursor-pointer list-none pr-6 font-bold">
+        {question}
+      </summary>
+
+      <p className="mt-3 text-sm leading-6 text-slate-600">
+        {answer}
+      </p>
+
+    </details>
+  );
+}
+
+
+/* ========================================
    FORMAT
 ======================================== */
 
@@ -510,4 +727,3 @@ function formatCurrency(value: number) {
     maximumFractionDigits: 0,
   }).format(value);
 }
-
