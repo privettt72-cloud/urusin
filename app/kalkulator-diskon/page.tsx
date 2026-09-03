@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -99,13 +98,13 @@ export default function KalkulatorDiskonPage() {
         </div>
 
         <h1 className="text-3xl font-black tracking-tight md:text-4xl">
-          Kalkulator Diskon
+          Kalkulator Diskon Online
         </h1>
 
         <p className="mt-2 max-w-2xl text-slate-600">
-          Hitung harga setelah diskon, jumlah
-          penghematan, dan harga akhir setelah
-          pajak.
+          Hitung persentase diskon, harga setelah diskon,
+          jumlah penghematan, dan harga akhir setelah
+          pajak dengan mudah.
         </p>
 
       </section>
@@ -126,8 +125,7 @@ export default function KalkulatorDiskonPage() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              Masukkan harga barang dan
-              persentase diskon.
+              Masukkan harga barang dan persentase diskon.
             </p>
 
           </div>
@@ -390,7 +388,7 @@ export default function KalkulatorDiskonPage() {
           <div className="rounded-2xl bg-white p-6 shadow-sm">
 
             <h2 className="mb-4 text-lg font-black">
-              🧮 Cara Menghitung
+              🧮 Cara Menghitung Diskon
             </h2>
 
             <div className="space-y-3 text-sm leading-6 text-slate-600">
@@ -398,11 +396,11 @@ export default function KalkulatorDiskonPage() {
               <div className="rounded-xl bg-slate-50 p-4">
 
                 <p className="font-bold text-slate-900">
-                  1. Nilai Diskon
+                  1. Hitung Nilai Diskon
                 </p>
 
                 <p>
-                  Harga awal × persentase diskon
+                  Harga awal × persentase diskon ÷ 100.
                 </p>
 
               </div>
@@ -410,11 +408,11 @@ export default function KalkulatorDiskonPage() {
               <div className="rounded-xl bg-slate-50 p-4">
 
                 <p className="font-bold text-slate-900">
-                  2. Harga Setelah Diskon
+                  2. Hitung Harga Setelah Diskon
                 </p>
 
                 <p>
-                  Harga awal − nilai diskon
+                  Harga awal − nilai diskon.
                 </p>
 
               </div>
@@ -422,11 +420,11 @@ export default function KalkulatorDiskonPage() {
               <div className="rounded-xl bg-slate-50 p-4">
 
                 <p className="font-bold text-slate-900">
-                  3. Pajak
+                  3. Hitung Pajak Jika Ada
                 </p>
 
                 <p>
-                  Harga setelah diskon × persentase pajak
+                  Harga setelah diskon × persentase pajak ÷ 100.
                 </p>
 
               </div>
@@ -434,11 +432,11 @@ export default function KalkulatorDiskonPage() {
               <div className="rounded-xl bg-slate-50 p-4">
 
                 <p className="font-bold text-slate-900">
-                  4. Harga Akhir
+                  4. Hitung Harga Akhir
                 </p>
 
                 <p>
-                  Harga setelah diskon + pajak
+                  Harga setelah diskon + nilai pajak.
                 </p>
 
               </div>
@@ -495,6 +493,210 @@ export default function KalkulatorDiskonPage() {
         </section>
 
       </div>
+
+
+      {/* ================= SEO CONTENT ================= */}
+
+      <section className="border-t bg-white">
+
+        <div className="mx-auto max-w-4xl px-5 py-14">
+
+          <h2 className="text-2xl font-black md:text-3xl">
+            Kalkulator Diskon untuk Menghitung Harga Promo
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-7 text-slate-600">
+
+            <p>
+              Kalkulator diskon Urusin dapat digunakan untuk
+              menghitung harga barang setelah mendapatkan
+              potongan harga. Masukkan harga awal dan
+              persentase diskon untuk mengetahui nilai
+              diskon, jumlah uang yang dihemat, dan harga
+              setelah diskon.
+            </p>
+
+            <p>
+              Kalkulator ini juga menyediakan kolom pajak
+              atau PPN. Jika persentase pajak dimasukkan,
+              pajak dihitung berdasarkan harga setelah
+              diskon sehingga kamu dapat melihat perkiraan
+              harga akhir yang harus dibayar.
+            </p>
+
+            <p>
+              Kamu dapat menggunakan kalkulator diskon ini
+              untuk membantu menghitung harga promo saat
+              berbelanja, membandingkan harga barang, atau
+              mengetahui berapa besar penghematan dari
+              sebuah potongan harga.
+            </p>
+
+          </div>
+
+
+          {/* JENIS PERHITUNGAN */}
+
+          <div className="mt-12">
+
+            <h2 className="text-2xl font-black">
+              Apa yang Bisa Dihitung?
+            </h2>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+
+              <SeoCard
+                title="Persentase Diskon"
+                text="Masukkan persentase seperti 10%, 20%, 30%, atau persentase lainnya untuk mengetahui nilai potongan dari harga awal."
+              />
+
+              <SeoCard
+                title="Harga Setelah Diskon"
+                text="Ketahui harga barang setelah dikurangi nilai diskon yang diberikan."
+              />
+
+              <SeoCard
+                title="Jumlah Penghematan"
+                text="Lihat berapa rupiah yang dapat dihemat berdasarkan persentase diskon."
+              />
+
+              <SeoCard
+                title="Harga Setelah Pajak"
+                text="Tambahkan persentase pajak untuk mendapatkan perkiraan harga akhir setelah diskon dan pajak."
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* CARA MENGGUNAKAN */}
+
+          <div className="mt-12">
+
+            <h2 className="text-2xl font-black">
+              Cara Menggunakan Kalkulator Diskon
+            </h2>
+
+            <ol className="mt-5 space-y-3 text-sm leading-7 text-slate-600">
+
+              <li>
+                <strong>1. Masukkan harga awal.</strong>{" "}
+                Isi dengan harga barang sebelum diskon.
+              </li>
+
+              <li>
+                <strong>2. Masukkan persentase diskon.</strong>{" "}
+                Contohnya 10%, 20%, atau 50%.
+              </li>
+
+              <li>
+                <strong>3. Tambahkan pajak jika diperlukan.</strong>{" "}
+                Kolom pajak bersifat opsional.
+              </li>
+
+              <li>
+                <strong>4. Lihat hasil perhitungan.</strong>{" "}
+                Kalkulator akan menampilkan nilai diskon,
+                harga setelah diskon, dan harga akhir.
+              </li>
+
+            </ol>
+
+          </div>
+
+
+          {/* CONTOH LAIN */}
+
+          <div className="mt-12">
+
+            <h2 className="text-2xl font-black">
+              Contoh Menghitung Diskon
+            </h2>
+
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+
+              <p className="text-sm leading-7 text-slate-600">
+
+                Misalnya sebuah barang memiliki harga
+                <strong className="text-slate-900">
+                  {" "}Rp1.000.000
+                </strong>{" "}
+                dan mendapatkan diskon
+                <strong className="text-slate-900">
+                  {" "}20%
+                </strong>.
+
+              </p>
+
+              <div className="mt-4 space-y-2 text-sm leading-6">
+
+                <p>
+                  Nilai diskon = 20% × Rp1.000.000
+                </p>
+
+                <p>
+                  Nilai diskon = Rp200.000
+                </p>
+
+                <p className="font-black">
+                  Harga setelah diskon = Rp800.000
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* FAQ */}
+
+          <div className="mt-14">
+
+            <h2 className="text-2xl font-black md:text-3xl">
+              FAQ Kalkulator Diskon
+            </h2>
+
+            <div className="mt-6 space-y-4">
+
+              <Faq
+                question="Bagaimana cara menghitung diskon?"
+                answer="Nilai diskon dapat dihitung dengan mengalikan harga awal dengan persentase diskon lalu membaginya dengan 100. Setelah mendapatkan nilai diskon, kurangi harga awal dengan nilai tersebut untuk mendapatkan harga setelah diskon."
+              />
+
+              <Faq
+                question="Bagaimana cara menghitung harga setelah diskon?"
+                answer="Harga setelah diskon diperoleh dengan mengurangi harga awal dengan nilai diskon. Contohnya, harga Rp500.000 dengan diskon 20% mendapatkan potongan Rp100.000 sehingga harga setelah diskon menjadi Rp400.000."
+              />
+
+              <Faq
+                question="Berapa harga setelah diskon 20%?"
+                answer="Hasilnya bergantung pada harga awal. Misalnya harga Rp500.000 mendapat diskon 20%, nilai diskonnya Rp100.000 sehingga harga setelah diskon menjadi Rp400.000."
+              />
+
+              <Faq
+                question="Apakah kalkulator diskon ini gratis?"
+                answer="Ya. Kalkulator diskon Urusin dapat digunakan secara gratis tanpa perlu membuat akun."
+              />
+
+              <Faq
+                question="Apakah kalkulator bisa menghitung pajak setelah diskon?"
+                answer="Bisa. Masukkan persentase pajak pada kolom Pajak atau PPN. Kalkulator akan menghitung pajak berdasarkan harga setelah diskon dan menampilkan perkiraan harga akhirnya."
+              />
+
+              <Faq
+                question="Apakah kalkulator diskon bisa digunakan untuk belanja?"
+                answer="Bisa. Kalkulator ini dapat membantu menghitung harga promo, jumlah penghematan, harga setelah diskon, serta perkiraan harga akhir jika terdapat pajak."
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
 
 
       {/* ================= FOOTER ================= */}
@@ -698,7 +900,9 @@ function SummaryRow({
 
         {negative && "- "}
 
-        {formatCurrency(value)}
+        {formatCurrency(
+          Math.abs(value)
+        )}
 
       </span>
 
@@ -741,6 +945,60 @@ function Info({
 
 
 /* ========================================
+   SEO CARD
+======================================== */
+
+function SeoCard({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+      <h3 className="font-black">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        {text}
+      </p>
+
+    </div>
+  );
+}
+
+
+/* ========================================
+   FAQ
+======================================== */
+
+function Faq({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  return (
+    <details className="group rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+      <summary className="cursor-pointer list-none pr-6 font-bold">
+        {question}
+      </summary>
+
+      <p className="mt-3 text-sm leading-6 text-slate-600">
+        {answer}
+      </p>
+
+    </details>
+  );
+}
+
+
+/* ========================================
    FORMAT CURRENCY
 ======================================== */
 
@@ -751,4 +1009,3 @@ function formatCurrency(value: number) {
     maximumFractionDigits: 0,
   }).format(value);
 }
-
