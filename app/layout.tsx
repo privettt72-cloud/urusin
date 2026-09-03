@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://urusin.biz.id"),
+  metadataBase: new URL("https://www.urusin.biz.id"),
 
   title: {
     default: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urusin.biz.id",
+    url: "https://www.urusin.biz.id",
     siteName: "Urusin",
     title: "Urusin — Tools Digital untuk Kebutuhan Sehari-hari",
     description:
