@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -87,13 +86,15 @@ export default function KalkulatorTHRPage() {
         </div>
 
         <h1 className="text-3xl font-black md:text-4xl">
-          Kalkulator THR
+          Kalkulator THR Online
         </h1>
 
         <p className="mt-2 max-w-2xl text-slate-600">
-          Hitung perkiraan Tunjangan Hari Raya
-          berdasarkan gaji, tunjangan tetap,
-          dan masa kerja.
+          Hitung perkiraan Tunjangan Hari Raya (THR)
+          berdasarkan gaji, tunjangan tetap, dan masa kerja.
+          Kalkulator ini dapat digunakan untuk memperkirakan
+          THR 1 bulan maupun THR proporsional untuk masa kerja
+          kurang dari 12 bulan.
         </p>
 
       </section>
@@ -475,6 +476,255 @@ export default function KalkulatorTHRPage() {
 
           </div>
 
+
+          {/* SEO CONTENT */}
+
+          <section className="space-y-5 pt-5">
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                Kalkulator THR untuk Menghitung Tunjangan Hari Raya
+              </h2>
+
+              <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+
+                <p>
+                  Kalkulator THR Urusin membantu memperkirakan
+                  Tunjangan Hari Raya berdasarkan gaji, tunjangan
+                  tetap, dan masa kerja. Kamu dapat menggunakan
+                  kalkulator ini untuk mengetahui perkiraan THR
+                  apabila masa kerja sudah mencapai 12 bulan
+                  maupun jika masa kerja masih kurang dari 12 bulan.
+                </p>
+
+                <p>
+                  Untuk masa kerja kurang dari 12 bulan, perhitungan
+                  THR dilakukan secara proporsional berdasarkan
+                  masa kerja dibandingkan dengan 12 bulan. Jika
+                  masa kerja sudah mencapai 12 bulan atau lebih,
+                  kalkulator menggunakan faktor 1 bulan upah.
+                </p>
+
+                <p>
+                  Hasil yang ditampilkan merupakan estimasi berdasarkan
+                  data yang kamu masukkan. Nilai THR sebenarnya dapat
+                  bergantung pada ketentuan yang berlaku dan komponen
+                  upah yang digunakan oleh perusahaan.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            {/* CARA MENGHITUNG */}
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                Cara Menghitung THR
+              </h2>
+
+              <div className="mt-5 space-y-4">
+
+                <SeoCard
+                  title="1. Hitung upah sebulan"
+                  text="Jumlahkan gaji pokok dengan tunjangan tetap yang menjadi dasar perhitungan."
+                />
+
+                <SeoCard
+                  title="2. Tentukan masa kerja"
+                  text="Masa kerja digunakan untuk menentukan apakah THR diberikan sebesar satu bulan upah atau dihitung secara proporsional."
+                />
+
+                <SeoCard
+                  title="3. Hitung THR proporsional"
+                  text="Untuk masa kerja kurang dari 12 bulan, gunakan perbandingan masa kerja dibagi 12 lalu kalikan dengan upah sebulan."
+                />
+
+                <SeoCard
+                  title="4. Tentukan perkiraan THR"
+                  text="Untuk masa kerja 12 bulan atau lebih, estimasi THR pada kalkulator ini menggunakan faktor satu bulan upah."
+                />
+
+              </div>
+
+            </div>
+
+
+            {/* MASA KERJA */}
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                Contoh THR Berdasarkan Masa Kerja
+              </h2>
+
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Misalnya upah sebulan adalah Rp6.000.000.
+                Perkiraan THR berdasarkan masa kerja dapat
+                dihitung secara proporsional untuk masa kerja
+                kurang dari 12 bulan.
+              </p>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+
+                <SeoCard
+                  title="THR 3 bulan"
+                  text="3 ÷ 12 × Rp6.000.000 = Rp1.500.000."
+                />
+
+                <SeoCard
+                  title="THR 6 bulan"
+                  text="6 ÷ 12 × Rp6.000.000 = Rp3.000.000."
+                />
+
+                <SeoCard
+                  title="THR 9 bulan"
+                  text="9 ÷ 12 × Rp6.000.000 = Rp4.500.000."
+                />
+
+                <SeoCard
+                  title="THR 12 bulan"
+                  text="Masa kerja 12 bulan atau lebih menggunakan estimasi 1 bulan upah, yaitu Rp6.000.000."
+                />
+
+              </div>
+
+            </div>
+
+
+            {/* KOMPONEN */}
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                Komponen yang Digunakan dalam Kalkulator THR
+              </h2>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+
+                <SeoCard
+                  title="Gaji Pokok"
+                  text="Masukkan gaji pokok sesuai dengan penghasilan bulanan yang menjadi dasar perhitungan."
+                />
+
+                <SeoCard
+                  title="Tunjangan Tetap"
+                  text="Masukkan tunjangan tetap jika ada dan termasuk dalam komponen upah yang digunakan untuk perhitungan."
+                />
+
+                <SeoCard
+                  title="Masa Kerja"
+                  text="Pilih masa kerja mulai dari 1 bulan sampai 12 bulan atau lebih."
+                />
+
+                <SeoCard
+                  title="Perkiraan THR"
+                  text="Hasil akhir menunjukkan estimasi THR berdasarkan data penghasilan dan masa kerja yang dimasukkan."
+                />
+
+              </div>
+
+            </div>
+
+
+            {/* CARA MENGGUNAKAN */}
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                Cara Menggunakan Kalkulator THR
+              </h2>
+
+              <ol className="mt-5 space-y-4 text-sm leading-6 text-slate-600">
+
+                <li>
+                  <strong className="text-slate-900">
+                    Masukkan gaji pokok.
+                  </strong>{" "}
+                  Isi nominal gaji pokok bulanan.
+                </li>
+
+                <li>
+                  <strong className="text-slate-900">
+                    Masukkan tunjangan tetap.
+                  </strong>{" "}
+                  Jika tidak ada, bagian ini dapat dikosongkan.
+                </li>
+
+                <li>
+                  <strong className="text-slate-900">
+                    Pilih masa kerja.
+                  </strong>{" "}
+                  Tentukan jumlah bulan masa kerja.
+                </li>
+
+                <li>
+                  <strong className="text-slate-900">
+                    Lihat hasil.
+                  </strong>{" "}
+                  Kalkulator akan langsung menampilkan perkiraan
+                  THR berdasarkan data yang dimasukkan.
+                </li>
+
+              </ol>
+
+            </div>
+
+
+            {/* FAQ */}
+
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+              <h2 className="text-2xl font-black">
+                FAQ Kalkulator THR
+              </h2>
+
+              <div className="mt-5 space-y-4">
+
+                <Faq
+                  question="Apa itu kalkulator THR?"
+                  answer="Kalkulator THR adalah alat untuk membantu memperkirakan jumlah Tunjangan Hari Raya berdasarkan penghasilan dan masa kerja."
+                />
+
+                <Faq
+                  question="Bagaimana cara menghitung THR?"
+                  answer="Untuk masa kerja kurang dari 12 bulan, perkiraan THR dihitung dengan rumus masa kerja dibagi 12 kemudian dikalikan dengan upah sebulan. Untuk masa kerja 12 bulan atau lebih, estimasinya menggunakan satu bulan upah."
+                />
+
+                <Faq
+                  question="Berapa THR jika masa kerja 6 bulan?"
+                  answer="Jika upah sebulan Rp6.000.000 dan masa kerja 6 bulan, perkiraan THR adalah 6 ÷ 12 × Rp6.000.000 atau Rp3.000.000."
+                />
+
+                <Faq
+                  question="Berapa THR jika masa kerja 3 bulan?"
+                  answer="Jika upah sebulan Rp6.000.000 dan masa kerja 3 bulan, perkiraan THR adalah 3 ÷ 12 × Rp6.000.000 atau Rp1.500.000."
+                />
+
+                <Faq
+                  question="Apakah tunjangan tetap dihitung dalam kalkulator THR?"
+                  answer="Kalkulator ini menggunakan gaji pokok ditambah tunjangan tetap sebagai upah sebulan yang menjadi dasar estimasi."
+                />
+
+                <Faq
+                  question="Apakah kalkulator THR ini gratis?"
+                  answer="Ya. Kalkulator THR Urusin dapat digunakan secara gratis melalui browser tanpa perlu menginstal aplikasi."
+                />
+
+                <Faq
+                  question="Apakah hasil kalkulator THR merupakan jumlah THR resmi?"
+                  answer="Tidak. Hasil kalkulator merupakan estimasi berdasarkan data yang dimasukkan. Jumlah THR sebenarnya dapat bergantung pada ketentuan yang berlaku, komponen upah, dan kondisi hubungan kerja."
+                />
+
+              </div>
+
+            </div>
+
+          </section>
+
         </section>
 
       </div>
@@ -639,6 +889,60 @@ function Info({
 
 
 /* ========================================
+   SEO CARD
+======================================== */
+
+function SeoCard({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 p-4">
+
+      <h3 className="font-bold text-slate-900">
+        {title}
+      </h3>
+
+      <p className="mt-1 text-sm leading-6 text-slate-600">
+        {text}
+      </p>
+
+    </div>
+  );
+}
+
+
+/* ========================================
+   FAQ
+======================================== */
+
+function Faq({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  return (
+    <details className="rounded-xl border border-slate-200 p-4">
+
+      <summary className="cursor-pointer font-bold text-slate-900">
+        {question}
+      </summary>
+
+      <p className="mt-3 text-sm leading-6 text-slate-600">
+        {answer}
+      </p>
+
+    </details>
+  );
+}
+
+
+/* ========================================
    FORMAT
 ======================================== */
 
@@ -649,4 +953,3 @@ function formatCurrency(value: number) {
     maximumFractionDigits: 0,
   }).format(value);
 }
-
