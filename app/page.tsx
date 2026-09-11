@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState } from "react";
@@ -65,6 +66,15 @@ const tools: Tool[] = [
     description:
       "Catat pemasukan dan pengeluaran untuk mengatur keuangan sehari-hari.",
     href: "/keuangan",
+    category: "Keuangan",
+    popular: false,
+  },
+  {
+    icon: "🧾",
+    title: "Buat Invoice Online",
+    description:
+      "Buat invoice profesional untuk bisnis, freelance, jasa, dan UMKM.",
+    href: "/invoice",
     category: "Keuangan",
     popular: false,
   },
@@ -719,6 +729,11 @@ export default function HomePage() {
                 />
 
                 <FooterLink
+                  href="/invoice"
+                  text="Buat Invoice Online"
+                />
+
+                <FooterLink
                   href="/kalkulator-gaji"
                   text="Kalkulator Gaji"
                 />
@@ -827,3 +842,4 @@ function FooterLink({
     </a>
   );
 }
+
