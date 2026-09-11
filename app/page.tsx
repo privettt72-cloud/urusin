@@ -61,6 +61,15 @@ const tools: Tool[] = [
     popular: true,
   },
   {
+    icon: "📄",
+    title: "Foto ke PDF",
+    description:
+    "Gabungkan beberapa foto menjadi satu file PDF secara gratis.",
+    href: "/foto-ke-pdf",
+    category: "Foto",
+    popular: false,
+  },
+  {
     icon: "💰",
     title: "Catat Keuangan",
     description:
