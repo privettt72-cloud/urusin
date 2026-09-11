@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -59,6 +58,15 @@ const tools: Tool[] = [
     href: "/compress-foto",
     category: "Foto",
     popular: true,
+  },
+  {
+    icon: "💰",
+    title: "Catat Keuangan",
+    description:
+      "Catat pemasukan dan pengeluaran untuk mengatur keuangan sehari-hari.",
+    href: "/keuangan",
+    category: "Keuangan",
+    popular: false,
   },
   {
     icon: "💰",
@@ -706,6 +714,11 @@ export default function HomePage() {
                 />
 
                 <FooterLink
+                  href="/keuangan"
+                  text="Catat Keuangan"
+                />
+
+                <FooterLink
                   href="/kalkulator-gaji"
                   text="Kalkulator Gaji"
                 />
@@ -814,4 +827,3 @@ function FooterLink({
     </a>
   );
 }
-
