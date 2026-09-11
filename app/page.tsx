@@ -70,6 +70,16 @@ const tools: Tool[] = [
     popular: false,
   },
   {
+    icon: "📷",
+    title: "Scan Dokumen",
+    description:
+    "Scan foto dokumen secara otomatis dan luruskan perspektif langsung dari browser.",
+    href: "/scan-dokumen",
+    category: "Foto",
+    popular: false,
+  },
+  {  
+    
     icon: "💰",
     title: "Catat Keuangan",
     description:
