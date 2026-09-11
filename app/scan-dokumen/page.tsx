@@ -2,25 +2,23 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
+type ScanMode = "color" | "gray" | "bw";
+
 declare global {
   interface Window {
     cv: any;
   }
 }
 
-type Mode = "original" | "gray" | "bw";
-
 export default function ScanDokumenPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [resultUrl, setResultUrl] = useState("");
-  const [mode, setMode] = useState<Mode>("original");
-  const [processing, setProcessing] = useState(false);
+  const [mode, setMode] = useState<ScanMode>("color");
+  const [isScanning, setIsScanning] = useState(false);
   const [opencvReady, setOpencvReady] = useState(false);
-  const [message, setMessage] = useState(
-    "Pilih foto dokumen untuk mulai scan.",
-  );
+  const [error, setError] = useState("");
 
-  const imageRef = useRef<HTMLImageElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (window.cv) {
@@ -29,24 +27,22 @@ export default function ScanDokumenPage() {
     }
 
     const script = document.createElement("script");
-    script.src =
-      "https://docs.opencv.org/4.x/opencv.js";
+    script.src = "https://docs.opencv.org/4.x/opencv.js";
     script.async = true;
 
     script.onload = () => {
-      const checkOpenCV = () => {
-        if (window.cv) {
+      const checkOpenCV = setInterval(() => {
+        if (window.cv && window.cv.Mat) {
+          clearInterval(checkOpenCV);
           setOpencvReady(true);
-        } else {
-          setTimeout(checkOpenCV, 100);
         }
-      };
+      }, 100);
 
-      checkOpenCV();
+      setTimeout(() => clearInterval(checkOpenCV), 15000);
     };
 
     script.onerror = () => {
-      setMessage("Gagal memuat sistem scan. Silakan refresh halaman.");
+      setError("OpenCV gagal dimuat. Periksa koneksi internet.");
     };
 
     document.body.appendChild(script);
@@ -62,342 +58,613 @@ export default function ScanDokumenPage() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setMessage("File harus berupa gambar.");
+      setError("File harus berupa gambar.");
       return;
     }
 
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-
-    if (resultUrl) {
-      URL.revokeObjectURL(resultUrl);
-    }
+    setError("");
+    setResultUrl("");
 
     const url = URL.createObjectURL(file);
 
-    setImageUrl(url);
-    setResultUrl("");
-    setMessage("Foto berhasil dimuat. Tekan Scan Dokumen.");
+    setImageUrl((oldUrl) => {
+      if (oldUrl) URL.revokeObjectURL(oldUrl);
+      return url;
+    });
+
     event.target.value = "";
   };
 
-  const orderPoints = (points: { x: number; y: number }[]) => {
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+
+      image.src = src;
+    });
+  };
+
+  const orderPoints = (points: any[]) => {
     const sorted = [...points];
 
-    const topLeft = sorted.reduce((prev, current) =>
-      prev.x + prev.y < current.x + current.y ? prev : current,
+    const sum = (p: any) => p.x + p.y;
+    const diff = (p: any) => p.x - p.y;
+
+    const topLeft = sorted.reduce((a, b) =>
+      sum(a) < sum(b) ? a : b,
     );
 
-    const bottomRight = sorted.reduce((prev, current) =>
-      prev.x + prev.y > current.x + current.y ? prev : current,
+    const bottomRight = sorted.reduce((a, b) =>
+      sum(a) > sum(b) ? a : b,
     );
 
-    const topRight = sorted.reduce((prev, current) =>
-      prev.x - prev.y > current.x - current.y ? prev : current,
+    const topRight = sorted.reduce((a, b) =>
+      diff(a) > diff(b) ? a : b,
     );
 
-    const bottomLeft = sorted.reduce((prev, current) =>
-      prev.x - prev.y < current.x - current.y ? prev : current,
+    const bottomLeft = sorted.reduce((a, b) =>
+      diff(a) < diff(b) ? a : b,
     );
 
     return [topLeft, topRight, bottomRight, bottomLeft];
   };
 
-  const distance = (
-    a: { x: number; y: number },
-    b: { x: number; y: number },
-  ) => {
+  const distance = (a: any, b: any) => {
     return Math.sqrt(
-      Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2),
+      Math.pow(a.x - b.x, 2) +
+        Math.pow(a.y - b.y, 2),
     );
   };
 
-  const scanDocument = async () => {
-    if (!imageUrl || !imageRef.current) {
-      setMessage("Pilih foto dokumen terlebih dahulu.");
-      return;
+  const applySharpen = (src: any) => {
+    const cv = window.cv;
+
+    const blurred = new cv.Mat();
+    const sharpened = new cv.Mat();
+
+    // Unsharp masking:
+    // hasil = original * 1.5 - blur * 0.5
+    cv.GaussianBlur(
+      src,
+      blurred,
+      new cv.Size(0, 0),
+      1.2,
+      1.2,
+      cv.BORDER_DEFAULT,
+    );
+
+    cv.addWeighted(
+      src,
+      1.5,
+      blurred,
+      -0.5,
+      0,
+      sharpened,
+    );
+
+    blurred.delete();
+
+    return sharpened;
+  };
+
+  const processImage = async (
+    sourceUrl: string,
+    selectedMode: ScanMode,
+  ) => {
+    const cv = window.cv;
+
+    const image = await loadImage(sourceUrl);
+
+    /*
+     * Jangan mengecilkan gambar.
+     *
+     * Ini penting supaya tulisan kecil tidak kehilangan detail.
+     */
+    const sourceCanvas = document.createElement("canvas");
+
+    sourceCanvas.width = image.naturalWidth;
+    sourceCanvas.height = image.naturalHeight;
+
+    const sourceContext = sourceCanvas.getContext("2d");
+
+    if (!sourceContext) {
+      throw new Error("Canvas tidak tersedia.");
     }
 
-    if (!opencvReady || !window.cv) {
-      setMessage("Sistem scan masih dimuat. Coba lagi sebentar.");
-      return;
+    sourceContext.drawImage(
+      image,
+      0,
+      0,
+      image.naturalWidth,
+      image.naturalHeight,
+    );
+
+    const source = cv.imread(sourceCanvas);
+
+    /*
+     * Untuk deteksi dokumen kita boleh menggunakan
+     * gambar yang lebih kecil agar proses contour cepat.
+     *
+     * Tapi hasil akhirnya tetap menggunakan source
+     * dengan resolusi asli.
+     */
+    const detection = new cv.Mat();
+
+    const detectionScale = Math.min(
+      1,
+      1400 / source.cols,
+    );
+
+    if (detectionScale < 1) {
+      cv.resize(
+        source,
+        detection,
+        new cv.Size(
+          Math.round(source.cols * detectionScale),
+          Math.round(source.rows * detectionScale),
+        ),
+        0,
+        0,
+        cv.INTER_AREA,
+      );
+    } else {
+      source.copyTo(detection);
     }
 
-    setProcessing(true);
-    setMessage("Mendeteksi dokumen...");
+    const gray = new cv.Mat();
+    const blurred = new cv.Mat();
+    const edges = new cv.Mat();
 
-    try {
-      const cv = window.cv;
-      const image = imageRef.current;
+    cv.cvtColor(
+      detection,
+      gray,
+      cv.COLOR_RGBA2GRAY,
+    );
 
-      const source = cv.imread(image);
+    cv.GaussianBlur(
+      gray,
+      blurred,
+      new cv.Size(5, 5),
+      0,
+      0,
+      cv.BORDER_DEFAULT,
+    );
 
-      // Batasi ukuran pemrosesan agar tetap ringan di HP.
-      const maxWidth = 1600;
+    cv.Canny(
+      blurred,
+      edges,
+      50,
+      150,
+    );
 
-      let working = source;
+    /*
+     * Sedikit dilasi supaya garis tepi dokumen
+     * lebih mudah terhubung.
+     */
+    const kernel = cv.getStructuringElement(
+      cv.MORPH_RECT,
+      new cv.Size(3, 3),
+    );
 
-      if (source.cols > maxWidth) {
-        const scale = maxWidth / source.cols;
-        const resized = new cv.Mat();
+    cv.dilate(
+      edges,
+      edges,
+      kernel,
+    );
 
-        cv.resize(
-          source,
-          resized,
-          new cv.Size(
-            Math.round(source.cols * scale),
-            Math.round(source.rows * scale),
-          ),
-          0,
-          0,
-          cv.INTER_AREA,
-        );
+    kernel.delete();
 
-        working = resized;
+    const contours = new cv.MatVector();
+    const hierarchy = new cv.Mat();
+
+    cv.findContours(
+      edges,
+      contours,
+      hierarchy,
+      cv.RETR_EXTERNAL,
+      cv.CHAIN_APPROX_SIMPLE,
+    );
+
+    let bestContour = null;
+    let bestArea = 0;
+    let bestApprox = null;
+
+    const imageArea =
+      detection.cols * detection.rows;
+
+    for (let i = 0; i < contours.size(); i++) {
+      const contour = contours.get(i);
+
+      const area = cv.contourArea(contour);
+
+      if (area < imageArea * 0.15) {
+        contour.delete();
+        continue;
       }
 
-      const gray = new cv.Mat();
-      const blurred = new cv.Mat();
-      const edges = new cv.Mat();
-
-      cv.cvtColor(working, gray, cv.COLOR_RGBA2GRAY);
-
-      cv.GaussianBlur(
-        gray,
-        blurred,
-        new cv.Size(5, 5),
-        0,
-        0,
-        cv.BORDER_DEFAULT,
+      const perimeter = cv.arcLength(
+        contour,
+        true,
       );
 
-      cv.Canny(blurred, edges, 50, 150);
+      const approx = new cv.Mat();
 
-      const contours = new cv.MatVector();
-      const hierarchy = new cv.Mat();
-
-      cv.findContours(
-        edges,
-        contours,
-        hierarchy,
-        cv.RETR_LIST,
-        cv.CHAIN_APPROX_SIMPLE,
+      cv.approxPolyDP(
+        contour,
+        approx,
+        0.02 * perimeter,
+        true,
       );
 
-      const imageArea = working.cols * working.rows;
-
-      let bestContour: any = null;
-      let bestArea = 0;
-
-      for (let i = 0; i < contours.size(); i++) {
-        const contour = contours.get(i);
-        const area = cv.contourArea(contour);
-
-        if (area < imageArea * 0.15) {
-          contour.delete();
-          continue;
+      if (
+        approx.rows === 4 &&
+        area > bestArea
+      ) {
+        if (bestApprox) {
+          bestApprox.delete();
         }
 
-        const perimeter = cv.arcLength(contour, true);
-        const approx = new cv.Mat();
-
-        cv.approxPolyDP(
-          contour,
-          approx,
-          0.02 * perimeter,
-          true,
-        );
-
-        if (approx.rows === 4 && area > bestArea) {
-          if (bestContour) {
-            bestContour.delete();
-          }
-
-          bestContour = approx;
-          bestArea = area;
-        } else {
-          approx.delete();
-        }
-
+        bestContour = contour;
+        bestApprox = approx;
+        bestArea = area;
+      } else {
+        approx.delete();
         contour.delete();
       }
+    }
 
-      let output: any;
+    let output: any;
 
-      if (bestContour) {
-        const points: { x: number; y: number }[] = [];
+    if (
+      bestApprox &&
+      bestApprox.rows === 4
+    ) {
+      /*
+       * Ambil titik dari gambar deteksi,
+       * kemudian kembalikan ke koordinat gambar asli.
+       */
+      const points = [];
 
-        for (let i = 0; i < 4; i++) {
-          points.push({
-            x: bestContour.intPtr(i, 0)[0],
-            y: bestContour.intPtr(i, 0)[1],
-          });
-        }
+      for (let i = 0; i < 4; i++) {
+        const x =
+          bestApprox.data32S[i * 2] /
+          detectionScale;
 
-        const ordered = orderPoints(points);
+        const y =
+          bestApprox.data32S[i * 2 + 1] /
+          detectionScale;
 
-        const [topLeft, topRight, bottomRight, bottomLeft] =
-          ordered;
+        points.push({ x, y });
+      }
 
-        const widthTop = distance(topLeft, topRight);
-        const widthBottom = distance(bottomLeft, bottomRight);
+      const ordered = orderPoints(points);
 
-        const heightLeft = distance(topLeft, bottomLeft);
-        const heightRight = distance(topRight, bottomRight);
+      const [tl, tr, br, bl] = ordered;
 
-        const outputWidth = Math.max(
-          Math.round(widthTop),
-          Math.round(widthBottom),
-        );
+      const widthTop = distance(tl, tr);
+      const widthBottom = distance(bl, br);
 
-        const outputHeight = Math.max(
-          Math.round(heightLeft),
-          Math.round(heightRight),
-        );
+      const heightLeft = distance(tl, bl);
+      const heightRight = distance(tr, br);
 
-        const srcPoints = cv.matFromArray(
-          4,
-          1,
-          cv.CV_32FC2,
-          [
-            topLeft.x,
-            topLeft.y,
-            topRight.x,
-            topRight.y,
-            bottomRight.x,
-            bottomRight.y,
-            bottomLeft.x,
-            bottomLeft.y,
-          ],
-        );
+      const targetWidth = Math.round(
+        Math.max(widthTop, widthBottom),
+      );
 
-        const dstPoints = cv.matFromArray(
-          4,
-          1,
-          cv.CV_32FC2,
-          [
-            0,
-            0,
-            outputWidth - 1,
-            0,
-            outputWidth - 1,
-            outputHeight - 1,
-            0,
-            outputHeight - 1,
-          ],
-        );
+      const targetHeight = Math.round(
+        Math.max(heightLeft, heightRight),
+      );
 
-        const matrix = cv.getPerspectiveTransform(
+      /*
+       * Batasi ukuran maksimum hanya jika
+       * gambar sangat ekstrem besar.
+       *
+       * 3000 px masih cukup tinggi untuk
+       * mempertahankan tulisan kecil.
+       */
+      const maxOutputDimension = 3000;
+
+      const scale = Math.min(
+        1,
+        maxOutputDimension /
+          Math.max(targetWidth, targetHeight),
+      );
+
+      const finalWidth = Math.max(
+        1,
+        Math.round(targetWidth * scale),
+      );
+
+      const finalHeight = Math.max(
+        1,
+        Math.round(targetHeight * scale),
+      );
+
+      const srcPoints = cv.matFromArray(
+        4,
+        1,
+        cv.CV_32FC2,
+        [
+          tl.x,
+          tl.y,
+          tr.x,
+          tr.y,
+          br.x,
+          br.y,
+          bl.x,
+          bl.y,
+        ],
+      );
+
+      const dstPoints = cv.matFromArray(
+        4,
+        1,
+        cv.CV_32FC2,
+        [
+          0,
+          0,
+          finalWidth - 1,
+          0,
+          finalWidth - 1,
+          finalHeight - 1,
+          0,
+          finalHeight - 1,
+        ],
+      );
+
+      const transform =
+        cv.getPerspectiveTransform(
           srcPoints,
           dstPoints,
         );
 
-        output = new cv.Mat();
+      const warped = new cv.Mat();
 
-        cv.warpPerspective(
-          working,
-          output,
-          matrix,
-          new cv.Size(outputWidth, outputHeight),
-          cv.INTER_LINEAR,
-          cv.BORDER_CONSTANT,
-          new cv.Scalar(),
-        );
-
-        srcPoints.delete();
-        dstPoints.delete();
-        matrix.delete();
-
-        setMessage("Dokumen berhasil dideteksi otomatis.");
-      } else {
-        // Kalau sudut dokumen tidak ditemukan,
-        // gunakan foto asli agar pengguna tetap mendapatkan hasil.
-        output = working.clone();
-
-        setMessage(
-          "Batas dokumen tidak ditemukan. Foto asli digunakan.",
-        );
-      }
-
-      if (mode === "gray" || mode === "bw") {
-        const grayOutput = new cv.Mat();
-
-        cv.cvtColor(
-          output,
-          grayOutput,
-          cv.COLOR_RGBA2GRAY,
-        );
-
-        if (mode === "gray") {
-          output.delete();
-          output = grayOutput;
-        } else {
-          const threshold = new cv.Mat();
-
-          cv.adaptiveThreshold(
-            grayOutput,
-            threshold,
-            255,
-            cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv.THRESH_BINARY,
-            21,
-            10,
-          );
-
-          grayOutput.delete();
-          output.delete();
-
-          output = threshold;
-        }
-      }
-
-      // Sedikit peningkatan kontras.
-      if (mode !== "original") {
-        const enhanced = new cv.Mat();
-
-        if (output.channels() === 1) {
-          cv.equalizeHist(output, enhanced);
-          output.delete();
-          output = enhanced;
-        }
-      }
-
-      const canvas = document.createElement("canvas");
-
-      cv.imshow(canvas, output);
-
-      const newResultUrl = canvas.toDataURL(
-        "image/jpeg",
-        0.92,
+      cv.warpPerspective(
+        source,
+        warped,
+        transform,
+        new cv.Size(
+          finalWidth,
+          finalHeight,
+        ),
+        cv.INTER_CUBIC,
+        cv.BORDER_CONSTANT,
+        new cv.Scalar(
+          255,
+          255,
+          255,
+          255,
+        ),
       );
 
-      if (resultUrl) {
-        URL.revokeObjectURL(resultUrl);
-      }
+      output = warped;
 
-      setResultUrl(newResultUrl);
+      srcPoints.delete();
+      dstPoints.delete();
+      transform.delete();
+    } else {
+      /*
+       * Jika dokumen tidak terdeteksi,
+       * jangan melakukan transformasi paksa.
+       */
+      output = source.clone();
+    }
 
-      source.delete();
-      if (working !== source) working.delete();
-      gray.delete();
-      blurred.delete();
-      edges.delete();
-      contours.delete();
-      hierarchy.delete();
+    /*
+     * MODE GRAYSCALE
+     */
+    if (selectedMode === "gray") {
+      const grayOutput = new cv.Mat();
 
-      if (bestContour) {
-        bestContour.delete();
-      }
+      cv.cvtColor(
+        output,
+        grayOutput,
+        cv.COLOR_RGBA2GRAY,
+      );
+
+      /*
+       * CLAHE meningkatkan kontras tulisan
+       * tanpa terlalu menghancurkan background.
+       */
+      const clahe = new cv.CLAHE(
+        2.2,
+        new cv.Size(8, 8),
+      );
+
+      const enhanced = new cv.Mat();
+
+      clahe.apply(
+        grayOutput,
+        enhanced,
+      );
+
+      clahe.delete();
+      grayOutput.delete();
+
+      const sharpened =
+        applySharpen(enhanced);
+
+      enhanced.delete();
+      output.delete();
+
+      output = sharpened;
+    }
+
+    /*
+     * MODE HITAM PUTIH
+     *
+     * Adaptive threshold jauh lebih bagus
+     * untuk dokumen yang pencahayaannya tidak rata.
+     */
+    if (selectedMode === "bw") {
+      const grayOutput = new cv.Mat();
+
+      cv.cvtColor(
+        output,
+        grayOutput,
+        cv.COLOR_RGBA2GRAY,
+      );
+
+      const enhanced = new cv.Mat();
+
+      const clahe = new cv.CLAHE(
+        2.5,
+        new cv.Size(8, 8),
+      );
+
+      clahe.apply(
+        grayOutput,
+        enhanced,
+      );
+
+      const binary = new cv.Mat();
+
+      cv.adaptiveThreshold(
+        enhanced,
+        binary,
+        255,
+        cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv.THRESH_BINARY,
+        31,
+        11,
+      );
+
+      /*
+       * Sedikit morphological open untuk
+       * mengurangi noise kecil.
+       */
+      const morphKernel =
+        cv.getStructuringElement(
+          cv.MORPH_RECT,
+          new cv.Size(2, 2),
+        );
+
+      const cleaned = new cv.Mat();
+
+      cv.morphologyEx(
+        binary,
+        cleaned,
+        cv.MORPH_OPEN,
+        morphKernel,
+      );
+
+      /*
+       * Kembalikan ke RGBA supaya
+       * cv.imshow mudah digunakan.
+       */
+      const rgba = new cv.Mat();
+
+      cv.cvtColor(
+        cleaned,
+        rgba,
+        cv.COLOR_GRAY2RGBA,
+      );
+
+      morphKernel.delete();
+      cleaned.delete();
+      binary.delete();
+      enhanced.delete();
+      grayOutput.delete();
+      clahe.delete();
 
       output.delete();
-    } catch (error) {
-      console.error(error);
-      setMessage(
-        "Gagal memproses foto. Coba gunakan foto dokumen yang lebih jelas.",
+
+      output = rgba;
+    }
+
+    /*
+     * MODE COLOR
+     *
+     * Tetap beri sedikit sharpening
+     * agar tulisan tidak terlalu lembut setelah
+     * perspective correction.
+     */
+    if (selectedMode === "color") {
+      const sharpened =
+        applySharpen(output);
+
+      output.delete();
+
+      output = sharpened;
+    }
+
+    const canvas =
+      canvasRef.current ||
+      document.createElement("canvas");
+
+    canvas.width = output.cols;
+    canvas.height = output.rows;
+
+    cv.imshow(canvas, output);
+
+    /*
+     * JPEG kualitas tinggi.
+     * Tidak menggunakan 0.8 / 0.9 karena
+     * teks kecil mudah rusak akibat kompresi.
+     */
+    const result = canvas.toDataURL(
+      "image/jpeg",
+      0.98,
+    );
+
+    /*
+     * Bersihkan memory OpenCV.
+     */
+    source.delete();
+    detection.delete();
+    gray.delete();
+    blurred.delete();
+    edges.delete();
+    contours.delete();
+    hierarchy.delete();
+
+    if (bestContour) {
+      bestContour.delete();
+    }
+
+    if (bestApprox) {
+      bestApprox.delete();
+    }
+
+    output.delete();
+
+    return result;
+  };
+
+  const handleScan = async () => {
+    if (!imageUrl) {
+      setError("Silakan pilih foto dokumen terlebih dahulu.");
+      return;
+    }
+
+    if (!opencvReady) {
+      setError(
+        "Scanner sedang dimuat. Tunggu sebentar lalu coba lagi.",
+      );
+      return;
+    }
+
+    setIsScanning(true);
+    setError("");
+
+    try {
+      const result = await processImage(
+        imageUrl,
+        mode,
+      );
+
+      setResultUrl(result);
+    } catch (scanError) {
+      console.error(scanError);
+
+      setError(
+        "Gagal memproses dokumen. Coba gunakan foto yang lebih terang dan tidak terlalu miring.",
       );
     } finally {
-      setProcessing(false);
+      setIsScanning(false);
     }
   };
 
@@ -405,210 +672,297 @@ export default function ScanDokumenPage() {
     if (!resultUrl) return;
 
     const link = document.createElement("a");
+
     link.href = resultUrl;
     link.download = "scan-dokumen.jpg";
+
+    document.body.appendChild(link);
     link.click();
+    link.remove();
   };
 
   const reset = () => {
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-
-    setImageUrl("");
     setResultUrl("");
-    setMessage("Pilih foto dokumen untuk mulai scan.");
+    setError("");
   };
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <div className="mb-3 inline-flex rounded-2xl bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-            📷 Scan Dokumen
+      <section className="border-b bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+          <div className="max-w-3xl">
+            <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
+              📷 Scan Dokumen
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Scan Dokumen Online Gratis
+            </h1>
+
+            <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+              Ubah foto dokumen menjadi hasil scan yang
+              lebih rapi, lurus, tajam, dan mudah dibaca
+              langsung dari browser.
+            </p>
           </div>
-
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Scan Dokumen Online Gratis
-          </h1>
-
-          <p className="mx-auto mt-3 max-w-2xl text-slate-600">
-            Ubah foto dokumen menjadi hasil scan yang lebih rapi
-            langsung dari browser. Batas dokumen dideteksi secara
-            otomatis.
-          </p>
         </div>
+      </section>
 
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-8">
-          {!imageUrl ? (
-            <label className="flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 text-center transition hover:border-blue-400 hover:bg-blue-50">
-              <div className="mb-4 text-5xl">📄</div>
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="rounded-2xl border bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  1. Pilih foto dokumen
+                </h2>
 
-              <div className="text-lg font-bold text-slate-900">
-                Pilih foto dokumen
+                <p className="mt-1 text-sm text-slate-500">
+                  Gunakan foto dengan pencahayaan cukup dan
+                  dokumen terlihat jelas.
+                </p>
               </div>
 
-              <div className="mt-2 text-sm text-slate-500">
-                JPG atau PNG
-              </div>
+              <label className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-5 text-center transition hover:border-blue-400 hover:bg-blue-50">
+                <div className="text-4xl">📷</div>
 
-              <span className="mt-5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
-                Pilih Foto
-              </span>
+                <div className="mt-3 text-sm font-semibold text-slate-800">
+                  Pilih foto atau ambil foto
+                </div>
 
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/jpg"
-                capture="environment"
-                onChange={handleUpload}
-                className="hidden"
-              />
-            </label>
-          ) : (
-            <div className="space-y-6">
-              <div className="overflow-hidden rounded-2xl bg-slate-100">
-                <img
-                  ref={imageRef}
-                  src={imageUrl}
-                  alt="Foto dokumen"
-                  className="mx-auto max-h-[600px] w-auto max-w-full object-contain"
+                <div className="mt-1 text-xs text-slate-500">
+                  JPG, JPEG, PNG
+                </div>
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  capture="environment"
+                  onChange={handleUpload}
+                  className="hidden"
                 />
-              </div>
+              </label>
+
+              {imageUrl && (
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-900">
+                      Foto asli
+                    </h3>
+
+                    <button
+                      type="button"
+                      onClick={reset}
+                      className="text-sm font-medium text-red-600 hover:text-red-700"
+                    >
+                      Hapus hasil
+                    </button>
+                  </div>
+
+                  <div className="overflow-hidden rounded-xl border bg-slate-100">
+                    <img
+                      src={imageUrl}
+                      alt="Foto dokumen"
+                      className="max-h-[600px] w-full object-contain"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
-                <p className="mb-3 text-sm font-semibold text-slate-700">
-                  Mode hasil scan
-                </p>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  2. Pilih hasil scan
+                </h2>
 
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    {
-                      id: "original" as Mode,
-                      label: "Original",
-                    },
-                    {
-                      id: "gray" as Mode,
-                      label: "Grayscale",
-                    },
-                    {
-                      id: "bw" as Mode,
-                      label: "Hitam Putih",
-                    },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setMode(item.id)}
-                      className={`rounded-xl border px-3 py-3 text-sm font-semibold transition ${
-                        mode === item.id
-                          ? "border-blue-600 bg-blue-600 text-white"
-                          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                      }`}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMode("color")}
+                    className={`rounded-xl border px-3 py-3 text-sm font-medium transition ${
+                      mode === "color"
+                        ? "border-blue-600 bg-blue-50 text-blue-700"
+                        : "border-slate-200 bg-white text-slate-700"
+                    }`}
+                  >
+                    🎨 Warna
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMode("gray")}
+                    className={`rounded-xl border px-3 py-3 text-sm font-medium transition ${
+                      mode === "gray"
+                        ? "border-blue-600 bg-blue-50 text-blue-700"
+                        : "border-slate-200 bg-white text-slate-700"
+                    }`}
+                  >
+                    🌫️ Abu-abu
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMode("bw")}
+                    className={`rounded-xl border px-3 py-3 text-sm font-medium transition ${
+                      mode === "bw"
+                        ? "border-blue-600 bg-blue-50 text-blue-700"
+                        : "border-slate-200 bg-white text-slate-700"
+                    }`}
+                  >
+                    ⚫ B&W
+                  </button>
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={scanDocument}
-                  disabled={processing || !opencvReady}
-                  className="flex-1 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {processing
-                    ? "Memproses..."
-                    : !opencvReady
-                      ? "Menyiapkan Scanner..."
-                      : "🔍 Scan Dokumen"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="rounded-xl border border-slate-200 px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50"
-                >
-                  Ganti Foto
-                </button>
-              </div>
-
-              <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
-                {message}
-              </div>
-            </div>
-          )}
-
-          {resultUrl && (
-            <div className="mt-8 border-t border-slate-200 pt-8">
-              <h2 className="text-xl font-bold text-slate-900">
-                Hasil Scan
-              </h2>
-
-              <div className="mt-4 overflow-hidden rounded-2xl bg-slate-100">
-                <img
-                  src={resultUrl}
-                  alt="Hasil scan dokumen"
-                  className="mx-auto max-h-[700px] w-auto max-w-full object-contain"
-                />
               </div>
 
               <button
                 type="button"
-                onClick={downloadResult}
-                className="mt-5 w-full rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white hover:bg-emerald-700"
+                onClick={handleScan}
+                disabled={
+                  !imageUrl ||
+                  !opencvReady ||
+                  isScanning
+                }
+                className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
               >
-                ⬇️ Download Hasil Scan
+                {isScanning
+                  ? "Memproses dokumen..."
+                  : !opencvReady
+                    ? "Menyiapkan scanner..."
+                    : "Scan Dokumen"}
               </button>
+
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              {resultUrl && (
+                <div className="pt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-slate-900">
+                      Hasil Scan
+                    </h2>
+
+                    <button
+                      type="button"
+                      onClick={downloadResult}
+                      className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                    >
+                      Download JPG
+                    </button>
+                  </div>
+
+                  <div className="overflow-hidden rounded-xl border bg-slate-100">
+                    <img
+                      src={resultUrl}
+                      alt="Hasil scan dokumen"
+                      className="max-h-[800px] w-full object-contain"
+                    />
+                  </div>
+
+                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                    Hasil diproses langsung di browser.
+                    Foto tidak perlu dikirim ke server Urusin.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          <aside className="h-fit rounded-2xl border bg-white p-5 shadow-sm">
+            <h2 className="font-semibold text-slate-900">
+              Tips hasil lebih jelas
+            </h2>
+
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+              <li>
+                💡 Gunakan pencahayaan yang terang dan
+                merata.
+              </li>
+
+              <li>
+                📄 Pastikan seluruh bagian kertas masuk
+                ke dalam foto.
+              </li>
+
+              <li>
+                📱 Jangan terlalu dekat agar keempat sudut
+                dokumen terlihat.
+              </li>
+
+              <li>
+                ✋ Hindari tangan atau benda lain menutupi
+                tulisan.
+              </li>
+
+              <li>
+                🔎 Untuk tulisan kecil, gunakan foto dengan
+                resolusi tinggi.
+              </li>
+
+              <li>
+                ⚫ Gunakan mode B&W untuk dokumen teks
+                seperti surat dan formulir.
+              </li>
+            </ul>
+          </aside>
         </div>
-
-        <section className="mt-10 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <h2 className="text-2xl font-bold text-slate-900">
-            Cara Scan Dokumen
-          </h2>
-
-          <ol className="mt-5 space-y-4 text-slate-600">
-            <li>
-              <strong className="text-slate-900">1. Foto dokumen</strong>
-              <br />
-              Letakkan dokumen di permukaan yang cukup kontras.
-            </li>
-
-            <li>
-              <strong className="text-slate-900">2. Upload foto</strong>
-              <br />
-              Pilih foto dari HP atau komputer.
-            </li>
-
-            <li>
-              <strong className="text-slate-900">3. Scan otomatis</strong>
-              <br />
-              Urusin mencoba mendeteksi batas kertas dan
-              meluruskan perspektifnya.
-            </li>
-
-            <li>
-              <strong className="text-slate-900">4. Download</strong>
-              <br />
-              Simpan hasil scan ke perangkat.
-            </li>
-          </ol>
-        </section>
-
-        <section className="mt-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <h2 className="text-2xl font-bold text-slate-900">
-            Privasi
-          </h2>
-
-          <p className="mt-3 leading-7 text-slate-600">
-            Foto diproses langsung di browser. Urusin tidak perlu
-            mengunggah foto dokumen ke server untuk proses scan.
-          </p>
-        </section>
       </section>
+
+      <section className="border-t bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+          <div className="max-w-3xl">
+            <h2 className="text-2xl font-bold text-slate-900">
+              Scan dokumen lebih tajam dan mudah dibaca
+            </h2>
+
+            <p className="mt-4 leading-7 text-slate-600">
+              Scan Dokumen Urusin menggunakan pemrosesan
+              gambar langsung di browser untuk mendeteksi
+              area kertas, memperbaiki perspektif, meningkatkan
+              kontras, dan mempertajam tulisan.
+            </p>
+
+            <p className="mt-4 leading-7 text-slate-600">
+              Untuk dokumen seperti surat, formulir, nota,
+              kuitansi, dan tugas sekolah, mode B&W dapat
+              membantu membuat tulisan terlihat lebih tegas.
+            </p>
+
+            <h3 className="mt-8 text-lg font-semibold text-slate-900">
+              Apakah foto dikirim ke server?
+            </h3>
+
+            <p className="mt-2 leading-7 text-slate-600">
+              Tidak. Pemrosesan gambar dilakukan langsung
+              di browser pada perangkat kamu. Hasil scan
+              dibuat di perangkat sebelum di-download.
+            </p>
+
+            <h3 className="mt-8 text-lg font-semibold text-slate-900">
+              Apa yang dilakukan scanner secara otomatis?
+            </h3>
+
+            <p className="mt-2 leading-7 text-slate-600">
+              Scanner mencoba menemukan batas dokumen,
+              meluruskan perspektif, mempertahankan resolusi
+              tinggi, meningkatkan kontras, dan mempertajam
+              hasil agar tulisan lebih mudah dibaca.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t bg-slate-50">
+        <div className="mx-auto max-w-5xl px-4 py-8 text-center text-sm text-slate-500 sm:px-6">
+          © {new Date().getFullYear()} Urusin. Biar urusanmu beres.
+        </div>
+      </footer>
+
+      <canvas
+        ref={canvasRef}
+        className="hidden"
+      />
     </main>
   );
 }
