@@ -1,4 +1,3 @@
-
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
@@ -104,6 +103,38 @@ export default function CVPage() {
       }
     } catch {
       console.log("Data CV tidak dapat dimuat.");
+    }
+  }, []);
+
+  // ==============================
+  // LOAD DATA LOWONGAN
+  // ==============================
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const job = params.get("job");
+    const company = params.get("company");
+    const location = params.get("location");
+
+    if (!job && !company && !location) return;
+
+    if (location) {
+      setLokasi(location);
+    }
+
+    if (job || company) {
+      setPengalaman((current) =>
+        current.map((item, index) =>
+          index === 0
+            ? {
+                ...item,
+                position: job || item.position,
+                company: company || item.company,
+              }
+            : item
+        )
+      );
     }
   }, []);
 
@@ -1826,4 +1857,3 @@ function MinimalCV({
     </div>
   );
 }
-

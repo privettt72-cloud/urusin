@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -103,6 +102,34 @@ export default function SuratLamaranPage() {
         "Gagal membaca data CV:",
         error
       );
+    }
+  }, []);
+
+  // ================================
+  // LOAD DATA LOWONGAN
+  // ================================
+
+  useEffect(() => {
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    const job = params.get("job");
+    const company = params.get("company");
+    const location = params.get("location");
+
+    if (!job && !company && !location) return;
+
+    if (job) {
+      setPosisi(job);
+    }
+
+    if (company) {
+      setPerusahaan(company);
+    }
+
+    if (location) {
+      setLokasi(location);
     }
   }, []);
 
@@ -1227,4 +1254,3 @@ function InfoRow({
     </div>
   );
 }
-
