@@ -25,6 +25,15 @@ const tools: Tool[] = [
     popular: true,
   },
   {
+      icon: "💼",
+      title: "Asisten Cari Kerja",
+      description:
+      "Cari lowongan kerja berdasarkan posisi dan kota, lalu lanjutkan proses lamaran.",
+      href: "/asisten-cari-kerja",
+      category: "Kerja",
+      popular: true,
+  },
+  {
     icon: "💼",
     title: "Surat Lamaran",
     description:
