@@ -31,8 +31,8 @@ const backgrounds: BackgroundOption[] = [
   },
 ];
 
-const U2NET_MODEL_URL =
-  "https://2zaw1zher7hmyaq9.public.blob.vercel-storage.com/u2net.onnx";
+const U2NET_MODEL_URL = "/api/u2net";
+  
 
 rembgConfig.setCustomModelPath("u2net", U2NET_MODEL_URL);
 
