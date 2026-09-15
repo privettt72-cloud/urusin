@@ -86,6 +86,15 @@ const tools: Tool[] = [
     category: "Dokumen",
     popular: false,
   },
+  {  
+     icon: "🗜️",
+     title: "Kompres PDF",
+     description:
+     "Perkecil ukuran file PDF dengan mudah langsung dari browser.",
+     href: "/kompres-pdf",
+     category: "Dokumen",
+     popular: false,
+  },
   {
     icon: "✂️",
     title: "Pisah PDF",
