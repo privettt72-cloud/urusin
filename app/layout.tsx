@@ -84,10 +84,10 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
-  },
+  icon: "/logo.png?v=2",
+  shortcut: "/logo.png?v=2",
+  apple: "/logo.png?v=2",
+},
 };
 
 export default function RootLayout({
