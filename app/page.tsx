@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
 
-type Category = "Kerja" | "Foto" | "Keuangan";
+type Category = "Kerja" | "Foto" | "Dokumen" | "Keuangan";
 
 type Tool = {
   icon: string;
@@ -25,13 +24,13 @@ const tools: Tool[] = [
     popular: true,
   },
   {
-      icon: "💼",
-      title: "Asisten Cari Kerja",
-      description:
+    icon: "💼",
+    title: "Asisten Cari Kerja",
+    description:
       "Cari lowongan kerja berdasarkan posisi dan kota, lalu lanjutkan proses lamaran.",
-      href: "/asisten-cari-kerja",
-      category: "Kerja",
-      popular: true,
+    href: "/asisten-cari-kerja",
+    category: "Kerja",
+    popular: true,
   },
   {
     icon: "💼",
@@ -73,22 +72,30 @@ const tools: Tool[] = [
     icon: "📄",
     title: "Foto ke PDF",
     description:
-    "Gabungkan beberapa foto menjadi satu file PDF secara gratis.",
+      "Gabungkan beberapa foto menjadi satu file PDF secara gratis.",
     href: "/foto-ke-pdf",
-    category: "Foto",
+    category: "Dokumen",
     popular: false,
   },
   {
     icon: "📷",
     title: "Scan Dokumen",
     description:
-    "Scan foto dokumen secara otomatis dan luruskan perspektif langsung dari browser.",
+      "Scan foto dokumen secara otomatis dan luruskan perspektif langsung dari browser.",
     href: "/scan-dokumen",
-    category: "Foto",
+    category: "Dokumen",
     popular: false,
   },
-  {  
-    
+  {
+    icon: "✂️",
+    title: "Pisah PDF",
+    description:
+      "Pilih halaman tertentu dari PDF dan buat file PDF baru dengan mudah.",
+    href: "/pisah-pdf",
+    category: "Dokumen",
+    popular: false,
+  },
+  {
     icon: "💰",
     title: "Catat Keuangan",
     description:
@@ -160,6 +167,12 @@ const categories: {
     icon: "📸",
     description:
       "Urus ukuran dan file foto untuk berbagai kebutuhan.",
+  },
+  {
+    name: "Dokumen",
+    icon: "📄",
+    description:
+      "Kelola, ubah, dan rapikan berbagai dokumen dengan mudah.",
   },
   {
     name: "Keuangan",
@@ -470,7 +483,7 @@ export default function HomePage() {
           </div>
 
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
 
             {categories.map((category) => (
 
@@ -544,6 +557,7 @@ export default function HomePage() {
             "Semua",
             "Kerja",
             "Foto",
+            "Dokumen",
             "Keuangan",
           ].map((category) => (
 
@@ -752,6 +766,21 @@ export default function HomePage() {
                 />
 
                 <FooterLink
+                  href="/foto-ke-pdf"
+                  text="Foto ke PDF"
+                />
+
+                <FooterLink
+                  href="/scan-dokumen"
+                  text="Scan Dokumen"
+                />
+
+                <FooterLink
+                  href="/pisah-pdf"
+                  text="Pisah PDF"
+                />
+
+                <FooterLink
                   href="/keuangan"
                   text="Catat Keuangan"
                 />
@@ -870,4 +899,3 @@ function FooterLink({
     </a>
   );
 }
-
