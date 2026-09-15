@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import {
   remove,
   newSession,
-  rembgConfig,
 } from "@bunnio/rembg-web";
 
 type BackgroundOption = {
@@ -31,10 +30,8 @@ const backgrounds: BackgroundOption[] = [
   },
 ];
 
-const U2NET_MODEL_URL = "/api/u2net";
-  
-
-rembgConfig.setCustomModelPath("u2net", U2NET_MODEL_URL);
+const U2NET_MODEL_URL =
+  "https://2zaw1zher7hmyaq9.public.blob.vercel-storage.com/u2net.onnx";
 
 
 export default function GantiBackgroundPage() {
@@ -110,25 +107,19 @@ export default function GantiBackgroundPage() {
       setProgress(0);
       setStatus("Menyiapkan AI...");
 
-      const session = await newSession("u2net");
-
-      const result = await remove(file, { 
-  session,
-  postProcessMask: true,
-  onProgress: (info) => {
-    setProgress(info.progress);
-    setStatus(info.message);
-        },
-      });
-
-      const resultUrl = URL.createObjectURL(result);
-
-      setRemovedImage(resultUrl);
-      setProgress(100);
-      setStatus("Background berhasil dihapus.");
-    } catch (err) {
-      console.error("Background removal error:", err);
-
+     const session = await newSession("u2net_custom", {
+      modelPath: U2NET_MODEL_URL,
+    }); 
+ 
+    const result = await remove(file, {  
+     session,
+     postProcessMask: true,
+     onProgress: (info) => {
+      setProgress(info.progress);
+      setStatus(info.message);
+    },
+   });
+      
       setError(
         "Gagal menghapus background. Coba gunakan foto yang lebih jelas atau ukuran file yang lebih kecil."
       );
