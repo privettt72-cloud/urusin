@@ -51,40 +51,50 @@ const tools: Tool[] = [
     popular: true,
   },
   {
-    icon: "📸",
-    title: "Resize Foto",
-    description:
+     icon: "📸",
+     title: "Resize Foto",
+     description:
       "Ubah ukuran foto menjadi 2×3, 3×4, 4×6 atau custom.",
-    href: "/resize-foto",
-    category: "Foto",
-    popular: true,
+     href: "/resize-foto",
+     category: "Foto",
+     popular: true,
   },
   {
-    icon: "🗜️",
-    title: "Compress Foto",
-    description:
+     icon: "🗜️",
+     title: "Compress Foto",
+     description:
       "Kecilkan ukuran file foto untuk kebutuhan online.",
-    href: "/compress-foto",
-    category: "Foto",
-    popular: true,
+     href: "/compress-foto",
+     category: "Foto",
+     popular: true,
   },
   {
-    icon: "📄",
-    title: "Foto ke PDF",
-    description:
+     icon: "🎨",
+     title: "Ganti Background Foto",
+     description:
+     "Hapus background foto dan ganti dengan warna putih, merah, biru, atau transparan.",
+     href: "/ganti-background",
+     category: "Foto",
+     popular: false,
+
+  },
+  {
+     icon: "📄",
+     title: "Foto ke PDF",
+     description:
       "Gabungkan beberapa foto menjadi satu file PDF secara gratis.",
-    href: "/foto-ke-pdf",
-    category: "Dokumen",
-    popular: false,
+     href: "/foto-ke-pdf",
+     category: "Dokumen",
+     popular: false,
   },
   {
-    icon: "📷",
-    title: "Scan Dokumen",
-    description:
+     icon: "📷",
+      title: "Scan Dokumen",
+     description:
       "Scan foto dokumen secara otomatis dan luruskan perspektif langsung dari browser.",
     href: "/scan-dokumen",
-    category: "Dokumen",
-    popular: false,
+     category: "Dokumen",
+     popular: false,
   },
   {  
      icon: "🗜️",
