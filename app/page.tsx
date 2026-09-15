@@ -96,6 +96,16 @@ const tools: Tool[] = [
      popular: false,
   },
   {
+      icon: "🔗",
+      title: "Gabung PDF",
+     description:
+     "Gabungkan beberapa file PDF menjadi satu dengan mudah.",
+     href: "/gabung-pdf",
+     category: "Dokumen",
+     popular: false,
+
+  },
+  {
     icon: "✂️",
     title: "Pisah PDF",
     description:
