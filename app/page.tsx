@@ -104,8 +104,18 @@ const tools: Tool[] = [
      category: "Dokumen",
      popular: false,
 
+  },   
+  {
+     icon: "🔍",
+     title: "Foto ke Teks",
+     description:
+     "Ambil teks dari foto atau gambar menggunakan OCR langsung dari browser.",
+     href: "/foto-ke-teks",
+     category: "Dokumen",
+     popular: false,
   },
   {
+
     icon: "✂️",
     title: "Pisah PDF",
     description:
