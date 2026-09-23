@@ -68,16 +68,7 @@ const tools: Tool[] = [
      category: "Foto",
      popular: true,
   },
-  {
-     icon: "🎨",
-     title: "Ganti Background Foto",
-     description:
-     "Hapus background foto dan ganti dengan warna putih, merah, biru, atau transparan.",
-     href: "/ganti-background",
-     category: "Foto",
-     popular: false,
 
-  },
   {
      icon: "📄",
      title: "Foto ke PDF",
