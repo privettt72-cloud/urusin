@@ -68,14 +68,11 @@ const tools: Tool[] = [
      category: "Foto",
      popular: true,
   },
-
   {
-     icon: "📄",
-     title: "Foto ke PDF",
-     description:
-      "Gabungkan beberapa foto menjadi satu file PDF secara gratis.",
-     href: "/foto-ke-pdf",
-     category: "Dokumen",
+     icon: "🖼️", title: "Convert Foto", 
+     description: "Ubah foto JPG, PNG, dan WebP ke format yang kamu butuhkan.", 
+     href: "/convert-foto", 
+     category: "Foto", 
      popular: false,
   },
   {
